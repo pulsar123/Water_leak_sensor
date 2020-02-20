@@ -9,7 +9,8 @@ void connections()
   {
     WiFi_on = 1;
     // Turning the green LED on when WiFi is connected:
-    analogWrite(GREEN_LED_PIN, LED_PWM);
+    green_led = LED_PWM;
+    analogWrite(GREEN_LED_PIN, green_led);
 #ifdef DEBUG
     Serial.println("WiFi on");
 #endif
@@ -22,7 +23,8 @@ void connections()
     MQTT_on = 0;
     mqtt_init = 1;
     WiFi.begin(ssid, password);
-    analogWrite(GREEN_LED_PIN, 0);
+    green_led = 0;
+    analogWrite(GREEN_LED_PIN, green_led);
 #ifdef DEBUG
     Serial.println("WiFi off");
 #endif

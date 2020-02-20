@@ -4,9 +4,9 @@
  */
 #define SENSOR_ID 1
 
-//#define DEBUG
-#define QUIET
-//#define PRINT_SENSOR
+//#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
+#define QUIET  // Used for debugging purposes. Disables the buzzer
+//#define PRINT_SENSOR  // Used when DEBUG is enabled. Prints water sensor values to serial connection at equal intervals (DT_PRINT ms)
 
 /* Personal info (place the following lines in a separate file, private.h, uncomment all the lines, and replace xxxx with your personal details):
   const char* ssid = "xxx";
@@ -54,11 +54,8 @@ const byte RED_LED_PIN = 5; // D1
 const byte GREEN_LED_PIN = 4; // D2
 
 // The range of resistance corresponding to water:
-const int R_min = 150;
-const int R_max = 600; 
-
-// Green LED brightness (0-255):
-const byte LED_PWM = 10;
+const int R_min = 200;
+const int R_max = 500; 
 
 const unsigned long int DT_QUIET = 60000;  // Quiet time after pressing the button, ms
 const unsigned long int DT_QUIET_RESET = DT_QUIET + 600000;  // Resetting t_quiet after that many ms, to avoid timer overfill (would happen after ~50 days)
@@ -74,10 +71,23 @@ const unsigned long int DT1_RED_LED = 200; // Short flushes duration, ms, for ex
 const unsigned long int DT2_RED_LED = 2000; // Interval between groups of short flushes, ms (counted from the end of tghe last flush)
 const unsigned long int DT3_RED_LED = 500; // Long flashes duration, ms, for local alarm
 
+const unsigned long int DT_GREEN_LED = 1000; // Green LED blinking period, when WiFi is on but MQTT is not connected
+
 const unsigned long int DT_WATER = 10; // Interval between water sensor readings, ms (should be at least 10ms, or it will affect WiFi connection)
 
 #ifdef DEBUG
 const unsigned long int DT_PRINT = 500;  // interval between water sensor prints, ms
+#endif
+
+// If required, each sensor can have some parameters customized here
+// The same approach can be used inside private.h (e.g., to customize ssid and/or wifi passwords, repending on the sensor location)
+#if SENSOR_ID == 1
+// Green LED brightness (0-255):
+const byte LED_PWM = 10;
+
+#elif SENSOR_ID == 2
+// Green LED brightness (0-255):
+const byte LED_PWM = 10;
 #endif
 
 //+++++++++++++++++++++++++++++ Normally nothing should be changed below ++++++++++++++++++++++++++++++++++++++++++++++++++

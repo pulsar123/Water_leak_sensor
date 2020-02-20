@@ -33,6 +33,8 @@
  *   - triggering one sensor will make all sensors in the house sound an alarm (until a button is pressed on any of them).
  *     Red LED will flush differently depending on the ID of the sensor which originated the alarm.
  *   - alarm can trigger sending an email
+ *   
+ *   If the green LED is still too bright (compared to the red one), one can set the LED_PWM constant (in config.h) to <255 value (PWM control).
  */
 
 #include <ESP8266WiFi.h>
@@ -64,7 +66,7 @@ void setup() {
 
 // Initially LEDs are off, no buzzer:
   digitalWrite(RED_LED_PIN, red_led);
-  analogWrite(GREEN_LED_PIN, 0);
+  analogWrite(GREEN_LED_PIN, green_led);
   digitalWrite(BUZZER_PIN, buzzer_state);
 
     #ifdef DEBUG

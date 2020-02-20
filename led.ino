@@ -1,5 +1,5 @@
 void led ()
-// Operating the red LED.
+// Operating the LEDs.
 {
   if (external_alarm)
   // Pattern blinking if external alarm is received (number of short flushes = ID of the alarming sensor)
@@ -94,6 +94,25 @@ void led ()
   {
     red_led = 0;
     digitalWrite(RED_LED_PIN, red_led);
+  }
+
+
+//----------------------------------------------------------------------------
+// Green LED stuff
+
+// Green LED is blinking when WiFi is on but MQTT is not connected:
+  if (WiFi_on==1 && MQTT_on==0 && millis()-t_green_led > DT_GREEN_LED)
+  {
+    t_green_led = millis();
+    green_led = LED_PWM - green_led;
+    analogWrite(GREEN_LED_PIN, green_led);
+  }
+
+  // Cleanup:
+  if (MQTT_on==1 && green_led==0)
+  {
+    green_led = LED_PWM;
+    analogWrite(GREEN_LED_PIN, green_led);    
   }
   
   return;
