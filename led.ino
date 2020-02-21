@@ -6,8 +6,9 @@ void led ()
   {
     unsigned long int dt = millis() - t_red_led;
 
-    if (dt >= DT2_RED_LED && red_led_flag==4)
-    // Resetting the LED sequence every DT2_RED_LED ms
+//  Creating a gap of DT2_RED_FLAG ms between series of flashes:
+    if (dt >= DT2_RED_LED + 2*id_alarm*DT1_RED_LED && red_led_flag==2*(int)id_alarm)
+    // Resetting the LED sequence DT2_RED_LED ms after the flashing sequence
     {
       dt = 0;
       t_red_led = millis();
@@ -104,6 +105,7 @@ void led ()
   if (WiFi_on==1 && MQTT_on==0 && millis()-t_green_led > DT_GREEN_LED)
   {
     t_green_led = millis();
+    // Flipping the state of the green LED every DT_GREEN_LED ms:
     green_led = LED_PWM - green_led;
     analogWrite(GREEN_LED_PIN, green_led);
   }
@@ -111,6 +113,7 @@ void led ()
   // Cleanup:
   if (MQTT_on==1 && green_led==0)
   {
+    // Making sure the green LED is on once the MQTT connection is established (which can only happen if WiFi is also on):
     green_led = LED_PWM;
     analogWrite(GREEN_LED_PIN, green_led);    
   }

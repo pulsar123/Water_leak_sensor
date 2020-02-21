@@ -2,11 +2,11 @@ void buzzer ()
 // Operating the buzzer during alarm (N_BEEPS short beeps, DT1_BUZZER ms each, repeated every DT2_BUZZER ms)
 {
 
-  if (external_alarm || local_alarm)
+  if ((external_alarm || local_alarm) && !quiet)
   {
     unsigned long int dt = millis() - t_buzzer;
 
-    if (dt >= DT2_BUZZER && buz_flag==4)
+    if (dt >= DT2_BUZZER && buz_flag==2*N_BEEPS)
     // Resetting the buzzer sequence every DT2_BUZZER ms
     {
       dt = 0;
@@ -37,14 +37,18 @@ if (bad_sensor && bad_sensor_flag!=bad_sensor_flag_old)
     if (bad_sensor_flag == 1)
     {
       buzzer_state = 0;
+#ifndef QUIET        
       digitalWrite(BUZZER_PIN, buzzer_state); 
+#endif      
     }
 
     // Start of a short beep:
     if (bad_sensor_flag == 2)
     {
       buzzer_state = 1;
+#ifndef QUIET        
       digitalWrite(BUZZER_PIN, buzzer_state); 
+#endif      
     }
 }
 

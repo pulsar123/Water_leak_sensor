@@ -48,6 +48,7 @@ void connections()
     {
       // Subscribing (listening) to the following MQTT topics:
       client.subscribe(ROOT"/alarm");
+      client.subscribe(ROOT"/quiet");
       client.subscribe("openhab/start");
       MQTT_on = 1;
 #ifdef DEBUG

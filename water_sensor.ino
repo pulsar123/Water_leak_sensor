@@ -1,6 +1,15 @@
 void water_sensor()
 // Reading the water (resistance) sensor
 {
+
+// Ending the quiet period after DT_QUIET ms:
+  if (quiet && millis() > t_quiet + DT_QUIET)
+  {
+    quiet = 0;
+  }
+  
+  // This is to have the sensor reading done once every DT_WATER ms
+  // Without this, WiFi may not work (likely due to EM intereference)
   if (millis() - t_water < DT_WATER)
     return;
     
@@ -22,7 +31,7 @@ void water_sensor()
 #endif  
 
 // Not detecting water for DT_QUIET after the button was pressed:
-  if (t_quiet==0 || millis() > t_quiet + DT_QUIET)
+  if (!quiet)
     if (local_alarm==0 && R>=R_min && R<=R_max)
     // Water has just been detected
     {
@@ -77,5 +86,6 @@ void water_sensor()
     t_bad_sensor = 0;
   }
 
+return;
 }
 

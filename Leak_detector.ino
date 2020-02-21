@@ -69,6 +69,11 @@ void setup() {
   analogWrite(GREEN_LED_PIN, green_led);
   digitalWrite(BUZZER_PIN, buzzer_state);
 
+    #ifdef BUZZER_TEST
+    digitalWrite(BUZZER_PIN, 1);
+    delay(10000000);
+    #endif
+    
     #ifdef DEBUG
     delay(10000);
     Serial.println("Starting code");
@@ -119,6 +124,7 @@ void setup() {
   red_led_flag = 0;
   bad_sensor_flag = 0;
   bad_sensor_flag_old = 0;
+  quiet = 0;
 
 }
 

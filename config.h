@@ -5,8 +5,9 @@
 #define SENSOR_ID 1
 
 //#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
-#define QUIET  // Used for debugging purposes. Disables the buzzer
+//#define QUIET  // Used for debugging purposes. Disables the buzzer
 //#define PRINT_SENSOR  // Used when DEBUG is enabled. Prints water sensor values to serial connection at equal intervals (DT_PRINT ms)
+//#define BUZZER_TEST // Turns buzzer on, to tune its volume (voltage)
 
 /* Personal info (place the following lines in a separate file, private.h, uncomment all the lines, and replace xxxx with your personal details):
   const char* ssid = "xxx";
@@ -25,12 +26,13 @@
 #define ROOT_ID ROOT STRINGIZE(SENSOR_ID)
 /*  MQTT topics:
   Incoming:
-  ROOT"/alarm" : ID of the external sensor where alarm was triggered; 0 to call off alarm if external sensor button was pressed
+  ROOT/alarm : ID of the external sensor where alarm was triggered; 0 to call off alarm if external sensor no longer detect water leak
+  ROOT/quiet : if anything is received, pause the alarm (both local and external), for DT_QUIET ms
   openhab/start  : optional; if "1" is received (the sign that openhab has just re-started), the switch will re-publish its current state
 
   Outgoing:
-  ROOT"/alarm"   : for other sensors;  local sensor ID if local alarm was triggered; 0 if local alarm was cancelled (whether from pressing the button, or if water leak is gone)
-  ROOT_ID"/alarm" : for OpenHAB; 1 if local alarm was triggered; 0 if local alarm was cancelled (whether from pressing the button, or if water leak is gone)
+  ROOT/alarm   : for other sensors;  local sensor ID if local alarm was triggered; 0 if local alarm was cancelled (whether from pressing the button, or if water leak is gone)
+  ROOT_ID/alarm : for OpenHAB; 1 if local alarm was triggered; 0 if local alarm was cancelled (whether from pressing the button, or if water leak is gone)
 
   For the "openhab/start" thing to work, one needs to have the OpenHab to publish "1" (followed by "0") in this topic at startup.
   Under Windows this can be accomplished by adding this line before the last line of openhab's start.bat file:
@@ -58,20 +60,19 @@ const int R_min = 200;
 const int R_max = 500; 
 
 const unsigned long int DT_QUIET = 60000;  // Quiet time after pressing the button, ms
-const unsigned long int DT_QUIET_RESET = DT_QUIET + 600000;  // Resetting t_quiet after that many ms, to avoid timer overfill (would happen after ~50 days)
 const unsigned long int DT_DEBOUNCE = 100; // Physical switch debounce time in ms
 
 const int N_BEEPS = 2; // Number of short beeps in the alarm sound
 const unsigned long int DT1_BUZZER = 250; // Short beeps duration, ms
-const unsigned long int DT2_BUZZER = 2000; // Interval between groups of short beeps, ms
+const unsigned long int DT2_BUZZER = 2000 + 2*N_BEEPS*DT1_BUZZER; // Interval between groups of short beeps, ms
 const unsigned long int DT1_BAD_SENSOR = 50; // Short beep / LED flush duration if bad (shorted) water sensor, ms
 const unsigned long int DT2_BAD_SENSOR = 10000; // Interval between short beep / LED flushs if bad (shorted) water sensor, ms
 
 const unsigned long int DT1_RED_LED = 200; // Short flushes duration, ms, for external alarm
-const unsigned long int DT2_RED_LED = 2000; // Interval between groups of short flushes, ms (counted from the end of tghe last flush)
+const unsigned long int DT2_RED_LED = 2000; // Interval between groups of short flushes, ms
 const unsigned long int DT3_RED_LED = 500; // Long flashes duration, ms, for local alarm
 
-const unsigned long int DT_GREEN_LED = 1000; // Green LED blinking period, when WiFi is on but MQTT is not connected
+const unsigned long int DT_GREEN_LED = 500; // Green LED blinking period, when WiFi is on but MQTT is not connected
 
 const unsigned long int DT_WATER = 10; // Interval between water sensor readings, ms (should be at least 10ms, or it will affect WiFi connection)
 
@@ -114,6 +115,7 @@ byte id_alarm; // Sensor id for the external alarm
 byte buz_flag; // Flag used for buzzer
 byte bad_sensor; // =1 if water sensor is bad (too small resistance - likely shorted), 0 otherwise
 byte red_led_flag;
+byte quiet; // =1 during quiet time, 0 otherwise
 char buf[20];
 #ifdef DEBUG
 unsigned long int t_print;

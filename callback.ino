@@ -6,16 +6,15 @@ void callback(char* topic, byte* payload, unsigned int length)
   if (strcmp(topic, ROOT"/alarm") == 0)
   {
     if (external_alarm == 1 && (char)payload[0] == '0')
-      // External command to be quiet, for DT_QUIET ms
+      // External alarm was just called off
     {
       external_alarm = 0;
-      t_quiet = millis();
 #ifdef DEBUG
-      Serial.println("external_alarm=0");
+      Serial.println("External alarm called off");
 #endif
     }
     // No external alarm when the local alarm is on:
-    else if (local_alarm == 0 && external_alarm == 0 && (char)payload[0] != '0')
+    else if (quiet == 0 && local_alarm == 0 && external_alarm == 0 && (char)payload[0] != '0')
       // External command to sound alarm
     {
       payload[length] = '\0'; // Make payload a string by NULL terminating it.
@@ -36,6 +35,21 @@ void callback(char* topic, byte* payload, unsigned int length)
       }
     }
   }
+
+  // External command to be quiet, for DT_QUIET ms
+  if (strcmp(topic, ROOT"/quiet") == 0)
+    if (external_alarm == 1 || local_alarm == 1)
+    {
+      external_alarm = 0;
+      local_alarm = 0;
+      quiet = 1;
+      t_quiet = millis();
+#ifdef DEBUG
+      Serial.println("External command to be quiet");
+#endif
+    }
+
+
 
   if (strcmp(topic, "openhab/start") == 0 && (char)payload[0] == '1')
     // We received a signal that openhab server has just restarted, so will re-publish all mqtt states later, in mqtt()
