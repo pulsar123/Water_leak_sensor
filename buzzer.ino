@@ -34,7 +34,7 @@ if (bad_sensor && bad_sensor_flag!=bad_sensor_flag_old)
   // Short beeps if bad (shorted) water sensor; using red LED timers / flags for control
   {
     // End of a short beep:
-    if (bad_sensor_flag == 1)
+    if (bad_sensor_flag == 2)
     {
       buzzer_state = 0;
 #ifndef QUIET        
@@ -43,7 +43,7 @@ if (bad_sensor && bad_sensor_flag!=bad_sensor_flag_old)
     }
 
     // Start of a short beep:
-    if (bad_sensor_flag == 2)
+    if (bad_sensor_flag == 1)
     {
       buzzer_state = 1;
 #ifndef QUIET        
