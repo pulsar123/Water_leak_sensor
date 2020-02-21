@@ -7,7 +7,7 @@
 //#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
 //#define QUIET  // Used for debugging purposes. Disables the buzzer
 //#define PRINT_SENSOR  // Used when DEBUG is enabled. Prints water sensor values to serial connection at equal intervals (DT_PRINT ms)
-//#define BUZZER_TEST // Turns buzzer on, to tune its volume (voltage)
+//#define BUZZER_TEST // Turns buzzer on/off with the button, to tune its volume (voltage)
 
 /* Personal info (place the following lines in a separate file, private.h, uncomment all the lines, and replace xxxx with your personal details):
   const char* ssid = "xxx";
@@ -51,7 +51,7 @@
 // Pin used to read the state of the button
 const byte SWITCH_PIN = 0;  // D3, neeeds builin pullup resistor
 // Pin to operate the buzzer (via optocoupler):
-const byte BUZZER_PIN = 16; // D0
+const byte BUZZER_PIN = 16; // D0; Change to 4 (D2) or 5 (D1), because they are the only pins which don't get HIGH duribg reboot/reset
 const byte RED_LED_PIN = 5; // D1
 const byte GREEN_LED_PIN = 4; // D2
 
@@ -63,7 +63,7 @@ const unsigned long int DT_QUIET = 60000;  // Quiet time after pressing the butt
 const unsigned long int DT_DEBOUNCE = 100; // Physical switch debounce time in ms
 
 const int N_BEEPS = 2; // Number of short beeps in the alarm sound
-const unsigned long int DT1_BUZZER = 250; // Short beeps duration, ms
+const unsigned long int DT1_BUZZER = 500; // Short beeps duration, ms
 const unsigned long int DT2_BUZZER = 2000 + 2*N_BEEPS*DT1_BUZZER; // Interval between groups of short beeps, ms
 const unsigned long int DT1_BAD_SENSOR = 50; // Short beep / LED flush duration if bad (shorted) water sensor, ms
 const unsigned long int DT2_BAD_SENSOR = 10000; // Interval between short beep / LED flushs if bad (shorted) water sensor, ms
@@ -119,4 +119,7 @@ byte quiet; // =1 during quiet time, 0 otherwise
 char buf[20];
 #ifdef DEBUG
 unsigned long int t_print;
+#endif
+#ifdef BUZZER_TEST
+byte buzzer_on, buzzer_on_old;
 #endif

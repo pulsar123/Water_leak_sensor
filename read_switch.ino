@@ -22,6 +22,9 @@ void read_switch()
         if (MQTT_on)
           client.publish(ROOT"/quiet", "0");
       }
+      #ifdef BUZZER_TEST
+      buzzer_on = 1 - buzzer_on;
+      #endif
     }
 
 /*

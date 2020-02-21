@@ -2,6 +2,17 @@ void buzzer ()
 // Operating the buzzer during alarm (N_BEEPS short beeps, DT1_BUZZER ms each, repeated every DT2_BUZZER ms)
 {
 
+  #ifdef BUZZER_TEST
+  if (buzzer_on != buzzer_on_old)
+    {
+      buzzer_state = buzzer_on;
+      #ifndef QUIET        
+        digitalWrite(BUZZER_PIN, buzzer_state); 
+      #endif              
+    }
+  return;
+  #endif
+
   if ((external_alarm || local_alarm) && !quiet)
   {
     unsigned long int dt = millis() - t_buzzer;
