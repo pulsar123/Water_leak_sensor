@@ -2,12 +2,6 @@ void water_sensor()
 // Reading the water (resistance) sensor
 {
 
-// Ending the quiet period after DT_QUIET ms:
-  if (quiet && millis() > t_quiet + DT_QUIET)
-  {
-    quiet = 0;
-  }
-  
   // This is to have the sensor reading done once every DT_WATER ms
   // Without this, WiFi may not work (likely due to EM intereference)
   if (millis() - t_water < DT_WATER)

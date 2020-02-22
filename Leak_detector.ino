@@ -1,12 +1,13 @@
 /*
- *  Smart Water Leak Detector, by Sergey Mashchenko
+ *  Smart Water Leak Detector, by Sergey Mashchenko (c) 2020
  *  
  *  For ESP8266 microcontroller. Requires: 
  *   - a water sensor (two metal contacts)
  *   - red and green (or blue) LEDs 
  *   - a microswitch button
- *   - piezo buzzer (like SFM-27) working from DC voltage, plus Step Up Boost Converter (like MT3608), 5V->12V, 
- *      at least 30mA output. Tune the converter to generate 12V when the GPIO pin is set to HIGH.
+ *   - piezo buzzer (like SFM-27) working from DC voltage, plus Step Up Boost Converter (like MT3608), 5V->12...24V, 
+ *      at least 30mA output. Tune the converter to generate 12...24V when the GPIO pin is set to HIGH. Regulate the voltage
+ *      to change the loudness of the buzzer.
  *   - NPN transistor (used as a switch), to provide enough current to the piezo buzzer (via the step up voltage converter).
  *      I am using Darlington transistor (TIP120) simply because I have lots of them, but any NPN transistor with
  *      collector voltage rating >5V, collector current rating >60mA, and hFE (at 60 mA) of at least 5, will do.
@@ -30,11 +31,27 @@
  *  If water is still detected after that time, alarm is resumed.
  *  
  *  One can integrate multiple sensors via MQTT/OpenHAB, to do more tasks, e.g.:
- *   - triggering one sensor will make all sensors in the house sound an alarm (until a button is pressed on any of them).
- *     Red LED will flush differently depending on the ID of the sensor which originated the alarm.
+ *   - triggering one sensor makes all sensors in the house sound an alarm (until a button is pressed on any of them).
+ *     Red LED will flush differently depending on the ID of the sensor which originated the alarm. (Number of flushes = sensor ID.)
  *   - alarm can trigger sending an email
  *   
  *   If the green LED is still too bright (compared to the red one), one can set the LED_PWM constant (in config.h) to <255 value (PWM control).
+ *   
+ *   All the configurable parameters are in two files - config.h, and private.h (the latter should be created by you; see config.h for 
+ *   instructions).
+ *   
+ *   
+ *   To install the ESP8266 board, (using Arduino IDE):
+ *   
+  - Add the following 3rd party board manager under "File -> Preferences -> Additional Boards Manager URLs":
+       http://arduino.esp8266.com/stable/package_esp8266com_index.json
+  - Open the "Tools -> Board -> Board Manager" and click install for the ESP8266"
+  - Select your ESP8266 in "Tools -> Board"
+  
+  Libraries used:
+  https://github.com/knolleary/pubsubclient
+  https://github.com/ekstrand/ESP8266wifi
+  
  */
 
 #include <ESP8266WiFi.h>
@@ -105,9 +122,6 @@ void setup() {
   t_mqtt = t0;
   t_alarm = t0;
   t_buzzer = t0;
-#ifdef DEBUG
-  t_print = t0;
-#endif  
   t_water = t0;
   t_quiet = 0;
   t_bad_sensor = 0;
@@ -120,6 +134,9 @@ void setup() {
   bad_sensor_flag = 0;
   bad_sensor_flag_old = 0;
   quiet = 0;
+#ifdef DEBUG
+  t_print = t0;
+#endif  
 #ifdef BUZZER_TEST
   buzzer_on = 0;
   buzzer_on_old = 0;
@@ -141,7 +158,7 @@ void loop() {
   // Reading the physical switch state (with debouncing):
   read_switch();
 
-  // Warning signals with the red LED:
+  // Warning signals with LEDs:
   led();
 
   // Switching the buzzer on or off as needed:

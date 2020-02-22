@@ -91,7 +91,7 @@ void led ()
 }
 
 // Cleaning up:
-  if (!(external_alarm || local_alarm || bad_sensor) && red_led==1)
+  if (external_alarm==0 && local_alarm==0 && bad_sensor==0 && red_led==1)
   {
     red_led = 0;
     digitalWrite(RED_LED_PIN, red_led);

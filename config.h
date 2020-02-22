@@ -49,10 +49,10 @@
 // Pins used (WEMOS D1 mini)
 // (https://wiki.wemos.cc/products:d1:d1_mini)
 // Pin used to read the state of the button
-const byte SWITCH_PIN = 0;  // D3, neeeds builin pullup resistor
+const byte SWITCH_PIN = 0;  // D3, neeeds builtin pullup resistor
 // Pin to operate the buzzer (via optocoupler):
-const byte BUZZER_PIN = 16; // D0; Change to 4 (D2) or 5 (D1), because they are the only pins which don't get HIGH duribg reboot/reset
-const byte RED_LED_PIN = 5; // D1
+const byte BUZZER_PIN = 5; // D1; 4 (D2) and 5 (D1) are the only pins which don't get HIGH during reboot/reset
+const byte RED_LED_PIN = 16; // D0
 const byte GREEN_LED_PIN = 4; // D2
 
 // The range of resistance corresponding to water:
@@ -63,14 +63,14 @@ const unsigned long int DT_QUIET = 60000;  // Quiet time after pressing the butt
 const unsigned long int DT_DEBOUNCE = 100; // Physical switch debounce time in ms
 
 const int N_BEEPS = 2; // Number of short beeps in the alarm sound
-const unsigned long int DT1_BUZZER = 500; // Short beeps duration, ms
-const unsigned long int DT2_BUZZER = 2000 + 2*N_BEEPS*DT1_BUZZER; // Interval between groups of short beeps, ms
+const unsigned long int DT1_BUZZER = 250; // Short beeps duration, ms
+const unsigned long int DT2_BUZZER = 1000 + 2*N_BEEPS*DT1_BUZZER; // Interval between groups of short beeps, ms
 const unsigned long int DT1_BAD_SENSOR = 50; // Short beep / LED flush duration if bad (shorted) water sensor, ms
-const unsigned long int DT2_BAD_SENSOR = 10000; // Interval between short beep / LED flushs if bad (shorted) water sensor, ms
+const unsigned long int DT2_BAD_SENSOR = 5000; // Interval between short beep / LED flushs if bad (shorted) water sensor, ms
 
 const unsigned long int DT1_RED_LED = 200; // Short flushes duration, ms, for external alarm
-const unsigned long int DT2_RED_LED = 2000; // Interval between groups of short flushes, ms
-const unsigned long int DT3_RED_LED = 500; // Long flashes duration, ms, for local alarm
+const unsigned long int DT2_RED_LED = 1000; // Interval between groups of short flushes, ms
+const unsigned long int DT3_RED_LED = 250; // Long flashes duration, ms, for local alarm
 
 const unsigned long int DT_GREEN_LED = 500; // Green LED blinking period, when WiFi is on but MQTT is not connected
 
@@ -80,8 +80,9 @@ const unsigned long int DT_WATER = 10; // Interval between water sensor readings
 const unsigned long int DT_PRINT = 500;  // interval between water sensor prints, ms
 #endif
 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // If required, each sensor can have some parameters customized here
-// The same approach can be used inside private.h (e.g., to customize ssid and/or wifi passwords, repending on the sensor location)
+// The same approach can be used inside private.h (e.g., to customize ssid and/or wifi passwords, depending on the sensor location)
 #if SENSOR_ID == 1
 // Green LED brightness (0-255):
 const byte LED_PWM = 10;

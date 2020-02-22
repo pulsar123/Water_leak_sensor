@@ -1,5 +1,5 @@
 void buzzer ()
-// Operating the buzzer during alarm (N_BEEPS short beeps, DT1_BUZZER ms each, repeated every DT2_BUZZER ms)
+// Operating the buzzer
 {
 
   #ifdef BUZZER_TEST
@@ -65,7 +65,7 @@ if (bad_sensor && bad_sensor_flag!=bad_sensor_flag_old)
 
 
 // Cleaning up after an alarm:
-  if (!(external_alarm || local_alarm || bad_sensor) && buzzer_state==1)
+  if (external_alarm==0 && local_alarm==0 && bad_sensor==0 && buzzer_state==1)
   {
     buzzer_state = 0;
 #ifndef QUIET        
