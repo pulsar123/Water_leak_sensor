@@ -2,7 +2,7 @@
  *  1: Utility room
  * 
  */
-#define SENSOR_ID 1
+#define SENSOR_ID 2
 
 //#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
 //#define QUIET  // Used for debugging purposes. Disables the buzzer
@@ -56,7 +56,7 @@ const byte RED_LED_PIN = 16; // D0
 const byte GREEN_LED_PIN = 4; // D2
 
 // The range of resistance corresponding to water:
-const int R_min = 200;
+const int R_min = 100;
 const int R_max = 500; 
 
 const unsigned long int DT_QUIET = 60000;  // Quiet time after pressing the button, ms
@@ -75,6 +75,7 @@ const unsigned long int DT3_RED_LED = 250; // Long flashes duration, ms, for loc
 const unsigned long int DT_GREEN_LED = 500; // Green LED blinking period, when WiFi is on but MQTT is not connected
 
 const unsigned long int DT_WATER = 10; // Interval between water sensor readings, ms (should be at least 10ms, or it will affect WiFi connection)
+const unsigned long int DT_WATER_DEBOUNCE = 5000; // "Debouncing" parameter for the water sensor, ms, to prevent frequent alarms
 
 #ifdef DEBUG
 const unsigned long int DT_PRINT = 500;  // interval between water sensor prints, ms
@@ -106,8 +107,9 @@ byte mqtt_init;
 byte mqtt_refresh;
 byte red_led, green_led;
 byte switch_state, switch_state_old;
+byte sensor_state, sensor_state_old; // 0: no issues; 1: water leak; 2: shorted sensor
 unsigned long int t, t0, t_switch, t_a0, t_green_led, t_red_led, t_mqtt, t_quiet, t_alarm, t_buzzer;
-unsigned long int t_bad_sensor, t_water;
+unsigned long int t_bad_sensor, t_water, t_sensor;
 byte bad_sensor_flag, bad_sensor_flag_old; // 1/2: start/end of the short beep; 0 is for the start of the initial flash
 byte buzzer_state;
 byte external_alarm;  // =1 if alarm was triggered over mQTT
@@ -117,6 +119,7 @@ byte buz_flag; // Flag used for buzzer
 byte bad_sensor; // =1 if water sensor is bad (too small resistance - likely shorted), 0 otherwise
 byte red_led_flag;
 byte quiet; // =1 during quiet time, 0 otherwise
+byte quiet_ended; // =1 between quiet ending and water sensor processing
 char buf[20];
 #ifdef DEBUG
 unsigned long int t_print;
