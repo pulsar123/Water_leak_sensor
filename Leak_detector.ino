@@ -132,7 +132,6 @@ void setup() {
   bad_sensor_flag = 0;
   bad_sensor_flag_old = 0;
   quiet = 0;
-  quiet_ended = 0;
 #ifdef DEBUG
   t_print = t0;
 #endif

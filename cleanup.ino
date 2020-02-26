@@ -5,7 +5,7 @@ void cleanup()
   if (quiet && millis() > t_quiet + DT_QUIET)
   {
     quiet = 0;
-    quiet_ended = 1;
+    t_sensor = 0; // This will force water sensor to be read and updated, even if it's state hasn't changed
   }
 
   switch_state_old = switch_state;

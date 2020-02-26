@@ -38,9 +38,8 @@ void water_sensor()
 
 // "Debouncing" for the water sensor: no more than one state change in DT_WATER_DEBOUNCE ms
 // (Reduces the measurement "noise", when alarm would go on and off many times per second)
-  if ((quiet_ended || sensor_state_temp != sensor_state) && (t_sensor == 0 || millis() - t_sensor > DT_WATER_DEBOUNCE))
+  if ((t_sensor == 0) || (sensor_state_temp != sensor_state) && (millis() - t_sensor > DT_WATER_DEBOUNCE))
   {
-    quiet_ended = 0;
     
     // Not detecting water for DT_QUIET after the button was pressed:
     if (!quiet)

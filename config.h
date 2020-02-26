@@ -1,8 +1,8 @@
 /* The sensor ID (1...9)
  *  1: Utility room
- * 
+ *  2: Laundry room
  */
-#define SENSOR_ID 2
+#define SENSOR_ID 1
 
 //#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
 //#define QUIET  // Used for debugging purposes. Disables the buzzer
@@ -49,8 +49,8 @@
 // Pins used (WEMOS D1 mini)
 // (https://wiki.wemos.cc/products:d1:d1_mini)
 // Pin used to read the state of the button
-const byte SWITCH_PIN = 0;  // D3, neeeds builtin pullup resistor
-// Pin to operate the buzzer (via optocoupler):
+const byte SWITCH_PIN = 0;  // D3, needs builtin pullup resistor
+// Pin to operate the buzzer (via MOSFET and a step-up voltage converter):
 const byte BUZZER_PIN = 5; // D1; 4 (D2) and 5 (D1) are the only pins which don't get HIGH during reboot/reset
 const byte RED_LED_PIN = 16; // D0
 const byte GREEN_LED_PIN = 4; // D2
@@ -59,11 +59,11 @@ const byte GREEN_LED_PIN = 4; // D2
 const int R_min = 100;
 const int R_max = 500; 
 
-const unsigned long int DT_QUIET = 60000;  // Quiet time after pressing the button, ms
+const unsigned long int DT_QUIET = 30000;  // Quiet time after pressing the button, ms
 const unsigned long int DT_DEBOUNCE = 100; // Physical switch debounce time in ms
 
 const int N_BEEPS = 2; // Number of short beeps in the alarm sound
-const unsigned long int DT1_BUZZER = 250; // Short beeps duration, ms
+const unsigned long int DT1_BUZZER = 500; // Short beeps duration, ms
 const unsigned long int DT2_BUZZER = 1000 + 2*N_BEEPS*DT1_BUZZER; // Interval between groups of short beeps, ms
 const unsigned long int DT1_BAD_SENSOR = 50; // Short beep / LED flush duration if bad (shorted) water sensor, ms
 const unsigned long int DT2_BAD_SENSOR = 5000; // Interval between short beep / LED flushs if bad (shorted) water sensor, ms
@@ -75,8 +75,7 @@ const unsigned long int DT3_RED_LED = 250; // Long flashes duration, ms, for loc
 const unsigned long int DT_GREEN_LED = 500; // Green LED blinking period, when WiFi is on but MQTT is not connected
 
 const unsigned long int DT_WATER = 10; // Interval between water sensor readings, ms (should be at least 10ms, or it will affect WiFi connection)
-const unsigned long int DT_WATER_DEBOUNCE = 5000; // "Debouncing" parameter for the water sensor, ms, to prevent frequent alarms
-
+const unsigned long int DT_WATER_DEBOUNCE = 5000; // "Debouncing" parameter for the water sensor, ms, to minimize measurement noise
 #ifdef DEBUG
 const unsigned long int DT_PRINT = 500;  // interval between water sensor prints, ms
 #endif
@@ -119,7 +118,6 @@ byte buz_flag; // Flag used for buzzer
 byte bad_sensor; // =1 if water sensor is bad (too small resistance - likely shorted), 0 otherwise
 byte red_led_flag;
 byte quiet; // =1 during quiet time, 0 otherwise
-byte quiet_ended; // =1 between quiet ending and water sensor processing
 char buf[20];
 #ifdef DEBUG
 unsigned long int t_print;

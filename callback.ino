@@ -40,10 +40,15 @@ void callback(char* topic, byte* payload, unsigned int length)
   if (strcmp(topic, ROOT"/quiet") == 0)
     if (external_alarm == 1 || local_alarm == 1)
     {
+      // Only local alarm can be silenced for some time:
+      if (local_alarm)
+      {
+        quiet = 1;
+        t_quiet = millis();
+      }
+      // External alarm is silenced, but would go off at any time later if/when triggered
       external_alarm = 0;
       local_alarm = 0;
-      quiet = 1;
-      t_quiet = millis();
 #ifdef DEBUG
       Serial.println("External command to be quiet");
 #endif
