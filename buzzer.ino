@@ -13,7 +13,7 @@ void buzzer ()
   return;
   #endif
 
-  if ((external_alarm || local_alarm) && !quiet)
+  if (external_alarm || local_alarm)
   {
     unsigned long int dt = millis() - t_buzzer;
 
@@ -31,9 +31,11 @@ void buzzer ()
       if (dt >= i*DT1_BUZZER && buz_flag==i)
       {
         // Turning the buzzer on or off:
-#ifndef QUIET        
-        digitalWrite(BUZZER_PIN, buzzer_state); // even/odd i -> 1/0
-#endif        
+        // (Only turning off if "quiet")
+        if (!quiet || buzzer_state==0)
+          #ifndef QUIET        
+          digitalWrite(BUZZER_PIN, buzzer_state); // even/odd i -> 1/0
+          #endif        
         buz_flag = i+1;
         break;
       }

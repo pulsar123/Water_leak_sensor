@@ -48,7 +48,7 @@ void callback(char* topic, byte* payload, unsigned int length)
       }
       // External alarm is silenced, but would go off at any time later if/when triggered
       external_alarm = 0;
-      local_alarm = 0;
+//??      local_alarm = 0;
 #ifdef DEBUG
       Serial.println("External command to be quiet");
 #endif

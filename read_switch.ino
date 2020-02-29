@@ -20,7 +20,7 @@ void read_switch()
           t_quiet = millis();
           quiet = 1;
         }
-        local_alarm = 0;
+//??        local_alarm = 0;
         // External alarm is silenced, but would go off at any time later if/when triggered
         external_alarm = 0;
         // Sending MQTT quiet command to other sensors
