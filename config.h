@@ -2,12 +2,12 @@
  *  1: Utility room
  *  2: Laundry room
  */
-#define SENSOR_ID 1
+#define SENSOR_ID 2
 
 //#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
 //#define QUIET  // Used for debugging purposes. Disables the buzzer
 //#define PRINT_SENSOR  // Used when DEBUG is enabled. Prints water sensor values to serial connection at equal intervals (DT_PRINT ms)
-//#define BUZZER_TEST // Turns buzzer on/off with the button, to tune its volume (voltage)
+#define BUZZER_TEST // Turns buzzer on/off with the button, to tune its volume (voltage)
 
 /* Personal info (place the following lines in a separate file, private.h, uncomment all the lines, and replace xxxx with your personal details):
   const char* ssid = "xxx";
@@ -33,6 +33,7 @@
   Outgoing:
   ROOT/alarm   : for other sensors;  local sensor ID if local alarm was triggered; 0 if local alarm was cancelled (whether from pressing the button, or if water leak is gone)
   ROOT_ID/alarm : for OpenHAB; 1 if local alarm was triggered; 0 if local alarm was cancelled (whether from pressing the button, or if water leak is gone)
+  ROOT_ID/pulse : for OpenHAB; transmitting 1 every minute, to let OpenHAB detect if the sensor is online
 
   For the "openhab/start" thing to work, one needs to have the OpenHab to publish "1" (followed by "0") in this topic at startup.
   Under Windows this can be accomplished by adding this line before the last line of openhab's start.bat file:
@@ -80,16 +81,16 @@ const unsigned long int DT_WATER_DEBOUNCE = 5000; // "Debouncing" parameter for 
 const unsigned long int DT_PRINT = 500;  // interval between water sensor prints, ms
 #endif
 
+const unsigned long int DT_PULSE = 60000; // Interval between publishing /pulse commands to MQTT, ms
+
+// Green LED brightness (0-255):
+const byte LED_PWM = 10;
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // If required, each sensor can have some parameters customized here
 // The same approach can be used inside private.h (e.g., to customize ssid and/or wifi passwords, depending on the sensor location)
 #if SENSOR_ID == 1
-// Green LED brightness (0-255):
-const byte LED_PWM = 10;
-
 #elif SENSOR_ID == 2
-// Green LED brightness (0-255):
-const byte LED_PWM = 10;
 #endif
 
 //+++++++++++++++++++++++++++++ Normally nothing should be changed below ++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -108,7 +109,7 @@ byte red_led, green_led;
 byte switch_state, switch_state_old;
 byte sensor_state, sensor_state_old; // 0: no issues; 1: water leak; 2: shorted sensor
 unsigned long int t, t0, t_switch, t_a0, t_green_led, t_red_led, t_mqtt, t_quiet, t_alarm, t_buzzer;
-unsigned long int t_bad_sensor, t_water, t_sensor;
+unsigned long int t_bad_sensor, t_water, t_sensor, t_pulse;
 byte bad_sensor_flag, bad_sensor_flag_old; // 1/2: start/end of the short beep; 0 is for the start of the initial flash
 byte buzzer_state;
 byte external_alarm;  // =1 if alarm was triggered over mQTT

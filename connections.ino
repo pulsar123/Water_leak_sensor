@@ -51,6 +51,7 @@ void connections()
       client.subscribe(ROOT"/quiet");
       client.subscribe("openhab/start");
       MQTT_on = 1;
+      t_pulse = 0;
 #ifdef DEBUG
       Serial.println("MQTT on");
 #endif

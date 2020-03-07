@@ -123,6 +123,7 @@ void setup() {
   t_water = t0;
   t_quiet = 0;
   t_bad_sensor = 0;
+  t_pulse = 0;
   mqtt_init = 1;
   mqtt_refresh = 0;
   id_alarm = 0;
