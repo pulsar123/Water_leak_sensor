@@ -2,12 +2,12 @@
  *  1: Utility room
  *  2: Laundry room
  */
-#define SENSOR_ID 2
+#define SENSOR_ID 4
 
 //#define DEBUG  // Debugging mode. Prints debugging info to the serial interface
 //#define QUIET  // Used for debugging purposes. Disables the buzzer
 //#define PRINT_SENSOR  // Used when DEBUG is enabled. Prints water sensor values to serial connection at equal intervals (DT_PRINT ms)
-#define BUZZER_TEST // Turns buzzer on/off with the button, to tune its volume (voltage)
+//#define BUZZER_TEST // Turns buzzer on/off with the button, to tune its volume (voltage)
 
 /* Personal info (place the following lines in a separate file, private.h, uncomment all the lines, and replace xxxx with your personal details):
   const char* ssid = "xxx";
